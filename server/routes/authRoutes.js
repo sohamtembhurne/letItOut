@@ -7,7 +7,8 @@ router.post("/", userVerification, (req, res) => {
         {
             message: 'Protected route accessed',
             status: "kakkoi",
-            user: res.locals.username
+            user: res.locals.username,
+            userId: res.locals.userId
         }
     );
 })

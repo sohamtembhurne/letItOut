@@ -12,8 +12,9 @@ module.exports.userVerification = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.TOKEN_KEY)
-        req.userId = decoded.userId;
+        // req.userId = decoded.userId;
         res.locals.username = decoded.username
+        res.locals.userId = decoded.id
         next();
     } catch (error) {
         res.status(401).json({ error: 'Invalid token' })
