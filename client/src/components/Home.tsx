@@ -3,9 +3,16 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { notifySuccess } from "./Toaster";
 
+interface secretType {
+    userId: string,
+    text: string,
+}
+
 const Home = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
+    const [loggedId, setLoggedId] = useState("")
+    const [secrets, setSecrets] = useState<secretType[]>([]);
     const storedToken = localStorage.getItem("token");
 
     const verifyToken = async () => {
@@ -23,8 +30,9 @@ const Home = () => {
                     }
                 );
 
-                const { status, user } = data;
+                const { status, user, userId } = data;
                 setUsername(user);
+                setLoggedId(userId);
 
                 if (!status) {
                     console.log("Token verification failed. Redirecting to login...");
@@ -46,9 +54,21 @@ const Home = () => {
 
     };
 
+    const getSecrets = async () => {
+        const results = (await axios.get("http://localhost:5500/secrets")).data.results
+        // console.log(results);
+        setSecrets(results)
+    }
+
+    useEffect(() => {
+        getSecrets()
+    }, [])
+
     useEffect(() => {
         verifyToken()
-    }, [storedToken]);
+    }, []);
+
+
 
     const logout = () => {
         console.log("Clearing token");
@@ -68,6 +88,19 @@ const Home = () => {
                     type="text"
                     name=""
                     id="" />
+
+                {secrets.filter(secret => (secret.userId === loggedId)).map(secret => (
+                    <div>
+                        {secret.text}
+                    </div>
+                ))}
+
+                {secrets.filter(secret => (secret.userId !== loggedId)).map(secret => (
+                    <div>
+                        {secret.text}
+                    </div>
+                )
+                )}
             </div>
         </>
     );
