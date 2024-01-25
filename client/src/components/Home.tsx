@@ -10,6 +10,7 @@ interface secretType {
 
 const Home = () => {
     const navigate = useNavigate();
+    const [inputText, setInputText] = useState("");
     const [username, setUsername] = useState("");
     const [loggedId, setLoggedId] = useState("")
     const [secrets, setSecrets] = useState<secretType[]>([]);
@@ -77,32 +78,33 @@ const Home = () => {
     };
 
     return (
-        <>
-            <div className="home_page">
-                <h4>
-                    Welcome <span>{username}</span>
-                </h4>
-                <button onClick={logout}>LOGOUT</button>
+        <div className="flex flex-col justify-center bg-gray-800 text-white p-4 h-screen items-center">
+            <h4>
+                Welcome <span className="text-blue-500">{username}</span>
+            </h4>
+            <button onClick={logout} className="bg-red-500 text-white px-4 py-2 mt-2">LOGOUT</button>
 
-                <input
-                    type="text"
-                    name=""
-                    id="" />
+            <input
+                value={inputText}
+                type="text"
+                name=""
+                id=""
+                onChange={(e) => (setInputText(e.target.value))}
+                className="border rounded px-2 py-1 mt-4 text-black"
+            />
 
-                {secrets.filter(secret => (secret.userId === loggedId)).map(secret => (
-                    <div>
-                        {secret.text}
-                    </div>
-                ))}
+            {secrets.filter(secret => (secret.userId === loggedId)).map(secret => (
+                <div key={secret.userId} className="mt-4 border border-red-300">
+                    {secret.text}
+                </div>
+            ))}
 
-                {secrets.filter(secret => (secret.userId !== loggedId)).map(secret => (
-                    <div>
-                        {secret.text}
-                    </div>
-                )
-                )}
-            </div>
-        </>
+            {secrets.filter(secret => (secret.userId !== loggedId)).map(secret => (
+                <div key={secret.userId} className="mt-4">
+                    {secret.text}
+                </div>
+            ))}
+        </div>
     );
 };
 
