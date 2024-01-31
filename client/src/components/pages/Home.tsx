@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { notifySuccess } from "./Toaster";
+import { notifySuccess } from "../common/Toaster";
 
 interface secretType {
     userId: string,
@@ -71,7 +71,7 @@ const Home = () => {
 
     useEffect(() => {
         getSecrets()
-    }, [])
+    })
 
     useEffect(() => {
         verifyToken()

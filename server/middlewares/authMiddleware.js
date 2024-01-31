@@ -14,6 +14,7 @@ module.exports.userVerification = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.TOKEN_KEY)
         // req.userId = decoded.userId;
         res.locals.username = decoded.username
+        req.body.userId = decoded.id;
         res.locals.userId = decoded.id
         next();
     } catch (error) {

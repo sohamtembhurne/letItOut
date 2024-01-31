@@ -39,7 +39,23 @@ const postSecret = async (req, res) => {
 }
 
 const updateSecret = async (req, res) => {
+    const userId = req.body.userId;
+    const text = req.body.content;
 
+    try {
+
+        const existingSecret = await Secret.findOne({ userId })
+
+        existingSecret.text = text;
+
+        await existingSecret.save();
+        res.status(201).json({
+            message: "Secret updated successfully",
+            existingSecret
+        })
+    } catch (err) {
+        console.error(err);
+    }
 }
 
-module.exports = { getSecrets, postSecret }
+module.exports = { getSecrets, postSecret, updateSecret }

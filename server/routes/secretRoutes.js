@@ -7,4 +7,6 @@ router.get('/', secretController.getSecrets)
 
 router.post('/', userVerification, secretController.postSecret)
 
+router.put('/', userVerification, secretController.updateSecret)
+
 module.exports = router;
