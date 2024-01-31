@@ -10,6 +10,7 @@ interface secretType {
 
 const Home = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const [inputText, setInputText] = useState("");
     const [username, setUsername] = useState("");
     const [loggedId, setLoggedId] = useState("")
@@ -45,6 +46,7 @@ const Home = () => {
                 }
             } catch (error) {
                 console.error("Error during token verification:", error);
+                navigate("/login");
             }
         } else {
             console.log("Redirecting to login...");
@@ -56,9 +58,15 @@ const Home = () => {
     };
 
     const getSecrets = async () => {
-        const results = (await axios.get("http://localhost:5500/secrets")).data.results
-        // console.log(results);
-        setSecrets(results)
+        try {
+            const results = (await axios.get("http://localhost:5500/secrets")).data.results
+            // console.log(results);
+            setSecrets(results)
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -93,17 +101,27 @@ const Home = () => {
                 className="border rounded px-2 py-1 mt-4 text-black"
             />
 
-            {secrets.filter(secret => (secret.userId === loggedId)).map(secret => (
-                <div key={secret.userId} className="mt-4 border border-red-300">
-                    {secret.text}
+            {loading ? (
+                // Skeleton loading effect while secrets are loading
+                <div className="mt-4 border border-gray-600 animate-pulse">
+                    {/* Adjust the skeleton styling based on your preference */}
+                    Loading...
                 </div>
-            ))}
+            ) : (
+                <>
+                    {secrets.filter((secret) => secret.userId === loggedId).map((secret) => (
+                        <div key={secret.userId} className="mt-4 border border-red-300">
+                            {secret.text}
+                        </div>
+                    ))}
 
-            {secrets.filter(secret => (secret.userId !== loggedId)).map(secret => (
-                <div key={secret.userId} className="mt-4">
-                    {secret.text}
-                </div>
-            ))}
+                    {secrets.filter((secret) => secret.userId !== loggedId).map((secret) => (
+                        <div key={secret.userId} className="mt-4">
+                            {secret.text}
+                        </div>
+                    ))}
+                </>
+            )}
         </div>
     );
 };
