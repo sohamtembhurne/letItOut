@@ -42,8 +42,12 @@ const Signup = () => {
         }
     };
 
+    const handleLoginClick = () => {
+        navigate('/login')
+    }
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
             <form onSubmit={handleSignup} className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 <Input
                     label='Name'
@@ -75,6 +79,9 @@ const Signup = () => {
                     </button>
                 </div>
             </form>
+            <div className="text-gray-400 mt-4">
+                Already have an account? <span className="text-blue-400 cursor-pointer" onClick={handleLoginClick}>Login</span>
+            </div>
         </div>
     );
 };

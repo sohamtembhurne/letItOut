@@ -44,18 +44,32 @@ const updateSecret = async (req, res) => {
 
     try {
 
-        const existingSecret = await Secret.findOne({ userId })
+        let existingSecret = await Secret.findOne({ userId });
+
+        if (!existingSecret) {
+            const newSecret = new Secret({ userId, text });
+            await newSecret.save();
+            res.status(201).json({
+                message: "New secret created",
+                newSecret
+            });
+            return;
+        }
 
         existingSecret.text = text;
 
         await existingSecret.save();
-        res.status(201).json({
+        res.status(200).json({
             message: "Secret updated successfully",
             existingSecret
-        })
+        });
     } catch (err) {
         console.error(err);
+        res.status(500).json({
+            message: "Internal server error"
+        });
     }
 }
+
 
 module.exports = { getSecrets, postSecret, updateSecret }
