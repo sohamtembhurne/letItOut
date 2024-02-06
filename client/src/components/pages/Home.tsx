@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { notifySuccess } from "../common/Toaster";
+import { notifyError, notifySuccess } from "../common/Toaster";
 
 interface secretType {
     userId: string,
@@ -77,53 +77,83 @@ const Home = () => {
         verifyToken()
     }, []);
 
+    const handleUpdate = async () => {
+        if (inputText.trim() === "") {
+            notifyError('New secret empty');
+            return;
+        }
+        try {
+            await axios.put('http://localhost:5500/secrets', {
+                content: inputText
+            },
+                {
+                    headers: {
+                        Authorization: `Bearer ${storedToken}`,
+                    },
+                });
+            getSecrets();
+            setInputText("");
+            notifySuccess("Secret updated successfully");
+        } catch (err) {
+            console.error(err);
+            notifyError("Failed to update secret");
+        }
+    };
 
 
     const logout = () => {
         console.log("Clearing token");
-        localStorage.removeItem("token"); // Clear the token
+        localStorage.removeItem("token");
         navigate("/login");
     };
 
     return (
-        <div className="flex flex-col justify-center bg-gray-800 text-white p-4 h-screen items-center">
-            <h4>
-                Welcome <span className="text-blue-500">{username}</span>
-            </h4>
-            <button onClick={logout} className="bg-red-500 text-white px-4 py-2 mt-2">LOGOUT</button>
-
-            <input
-                value={inputText}
-                type="text"
-                name=""
-                id=""
-                onChange={(e) => (setInputText(e.target.value))}
-                className="border rounded px-2 py-1 mt-4 text-black"
-            />
-
-            {loading ? (
-                // Skeleton loading effect while secrets are loading
-                <div className="mt-4 border border-gray-600 animate-pulse">
-                    {/* Adjust the skeleton styling based on your preference */}
-                    Loading...
-                </div>
-            ) : (
-                <>
-                    {secrets.filter((secret) => secret.userId === loggedId).map((secret) => (
-                        <div key={secret.userId} className="mt-4 border border-red-300">
-                            {secret.text}
-                        </div>
-                    ))}
-
-                    {secrets.filter((secret) => secret.userId !== loggedId).map((secret) => (
-                        <div key={secret.userId} className="mt-4">
-                            {secret.text}
-                        </div>
-                    ))}
-                </>
-            )}
+        <div className="flex flex-col bg-gradient-to-br from-purple-800 to-blue-600 text-white p-4 h-screen items-center">
+            <div className="flex justify-between w-full">
+                <h4>
+                    Welcome <span className="text-blue-300">{username}</span>
+                </h4>
+                <button onClick={logout} className="bg-red-500 text-white px-4 py-2 mt-2">LOGOUT</button>
+            </div>
+    
+            <div className="flex flex-col justify-center items-center my-auto">
+    
+                <h3 className="text-lg font-semibold mt-4">Enter your new secret in this box</h3>
+    
+                <input
+                    value={inputText}
+                    type="text"
+                    name=""
+                    id=""
+                    onChange={(e) => (setInputText(e.target.value))}
+                    className="border rounded px-3 py-2 mt-2 text-black"
+                />
+                <button type="button" onClick={handleUpdate} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-2">Update Secret</button>
+    
+    
+                {loading ? (
+                    <div className="mt-4 border border-gray-600 animate-pulse p-4 rounded">
+                        Loading...
+                    </div>
+                ) : (
+                    <>
+                        {secrets.filter((secret) => secret.userId === loggedId).map((secret) => (
+                            <div key={secret.userId} className="mt-4 bg-gray-900 text-white px-4 py-2 rounded-xl">
+                                {secret.text}
+                            </div>
+                        ))}
+    
+                        {secrets.filter((secret) => secret.userId !== loggedId).map((secret) => (
+                            <div key={secret.userId} className="mt-4 bg-gray-800 text-white px-4 py-2 rounded-xl">
+                                {secret.text}
+                            </div>
+                        ))}
+                    </>
+                )}
+            </div>
         </div>
     );
+    
 };
 
 export default Home;

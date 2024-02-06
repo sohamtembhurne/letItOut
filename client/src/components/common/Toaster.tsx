@@ -9,7 +9,7 @@ export const notifyError = (msg: string) => toast.error(msg)
 const Toaster: React.FC = () => {
     return (
         <ToastContainer
-            position="top-right"
+            position="bottom-right"
             autoClose={1500}
             hideProgressBar={false}
             newestOnTop={false}
