@@ -14,6 +14,10 @@ connectToDb();
 
 app.use('/', routes)
 
-app.listen(process.env.PORT, () => {
-    console.log(`server is running on port ${process.env.PORT}`);
-})
+if(process.env.NODE_ENV !== 'test'){
+    app.listen(process.env.PORT, () => {
+        console.log(`server is running on port ${process.env.PORT}`);
+    })
+}
+
+module.exports = app;
