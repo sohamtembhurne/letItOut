@@ -7,7 +7,6 @@ import { notifyError, notifySuccess } from '../common/Toaster';
 const Signup = () => {
 
     const navigate = useNavigate();
-    const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
@@ -15,13 +14,12 @@ const Signup = () => {
         e.preventDefault();
 
         const reqBody = {
-            name: name,
             email: email,
             password: password
         }
 
         try {
-            const { data } = await axios.post("http://localhost:5500/user/signup", reqBody);
+            const { data } = await axios.post("http://localhost:5500/user/login", reqBody);
 
             localStorage.setItem('token', data.token);
 
@@ -41,19 +39,12 @@ const Signup = () => {
     };
 
     const handleLoginClick = () => {
-        navigate('/login')
+        navigate('/signup')
     }
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
             <form onSubmit={handleSignup} className="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <Input
-                    label='Name'
-                    type="text"
-                    placeholder="Your Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                />
                 <Input
                     label='Email'
                     type="email"
@@ -73,10 +64,10 @@ const Signup = () => {
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
                     >
-                        Sign Up
+                        Log in
                     </button>
                 </div>
-                <p className="text-gray-400 mt-4">Already have an account? <span className="text-blue-400 cursor-pointer" onClick={handleLoginClick}>Login</span></p>
+                <p className="text-gray-400 mt-4">Don't have an account? <span className="text-blue-400 cursor-pointer" onClick={handleLoginClick}>Sign Up</span></p>
             </form>
         </div>
     );
