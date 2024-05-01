@@ -7,14 +7,17 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
 	port := config.LoadEnvVar("PORT")
-	r := mux.NewRouter()
 
+	r := mux.NewRouter()
 	routes.SetupRoutes(r)
 
+	c := cors.Default().Handler(r)
+
 	fmt.Println("Server running on", port)
-	http.ListenAndServe(port, r)
+	http.ListenAndServe(port, c)
 }
