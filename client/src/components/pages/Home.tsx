@@ -71,7 +71,7 @@ const Home = () => {
 
     useEffect(() => {
         getSecrets()
-    })
+    }, [])
 
     useEffect(() => {
         verifyToken()
