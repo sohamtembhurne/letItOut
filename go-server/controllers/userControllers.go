@@ -144,6 +144,15 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		"success": true,
 		"token":   token,
 	}
-	json.NewEncoder(w).Encode(response)
+
+	jsonBytes, err := json.Marshal(response)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonBytes)
 
 }

@@ -70,12 +70,13 @@ const Home = () => {
     }
 
     useEffect(() => {
-        getSecrets()
-    })
+        verifyToken()
+    },[]);
 
     useEffect(() => {
-        verifyToken()
-    });
+        getSecrets()
+    },[])
+
 
     const handleUpdate = async () => {
         if (inputText.trim() === "") {

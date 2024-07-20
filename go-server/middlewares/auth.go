@@ -30,17 +30,21 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 		tokenString = tokenString[len("Bearer "):]
 
-		err := verifyToken(tokenString)
+		user, err := verifyToken(tokenString)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			response := map[string]interface{}{
 				"message": "Invalid token",
 				"success": false,
+				"user":    user.Username,
+				"userId":  user.Id,
 			}
 			json.NewEncoder(w).Encode(response)
 			return
 		}
 
+		r.Header.Set("X-User-Id", user.Id)
+		r.Header.Set("X-Username", user.Username)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -61,18 +65,24 @@ func GenerateToken(id string, username string) (string, error) {
 	return tokenString, nil
 }
 
-func verifyToken(tokenString string) error {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+type tokenBody struct {
+	Id       string
+	Username string
+	jwt.RegisteredClaims
+}
+
+func verifyToken(tokenString string) (*tokenBody, error) {
+	claims := &tokenBody{}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return tokenKey, nil
 	})
-
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !token.Valid {
-		return fmt.Errorf("invalid token")
+		return nil, fmt.Errorf("invalid token")
 	}
 
-	return nil
+	return claims, nil
 }

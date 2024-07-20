@@ -34,7 +34,12 @@ func GetSecrets(w http.ResponseWriter, r *http.Request) {
 		results = append(results, result)
 	}
 
-	jsonBytes, err := json.Marshal(results)
+	jsonObj := map[string]interface{}{
+		"message": "Results successfully fetched",
+		"results": results,
+	}
+
+	jsonBytes, err := json.Marshal(jsonObj)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
