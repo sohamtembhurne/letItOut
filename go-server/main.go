@@ -16,7 +16,14 @@ func main() {
 	r := mux.NewRouter()
 	routes.SetupRoutes(r)
 
-	c := cors.Default().Handler(r)
+	corsOpts := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, // Update with specific origins if necessary
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	})
+
+	c := corsOpts.Handler(r)
 
 	fmt.Println("Server running on", port)
 	http.ListenAndServe(port, c)

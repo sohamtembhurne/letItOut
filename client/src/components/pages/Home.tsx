@@ -75,7 +75,7 @@ const Home = () => {
 
     useEffect(() => {
         verifyToken()
-    }, []);
+    });
 
     const handleUpdate = async () => {
         if (inputText.trim() === "") {
